@@ -1,0 +1,23 @@
+{
+  "name": "point-of-sale-backend",
+  "version": "1.0.0",
+  "description": "Simple backend api for Point of sale application",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "nodemon server.js"
+  },
+  "author": "fahriansyah",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.6-alpha.5",
+    "express-validator": "^6.2.0",
+    "knex": "^0.19.4",
+    "mysql": "^2.17.1",
+    "objection": "^1.6.11",
+    "uuid": "^3.3.3"
+  }
+}
