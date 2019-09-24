@@ -13,5 +13,6 @@ Router
     .put("/update/:id", UpdateProductRules, ProductController.updateProduct)
     .delete("/delete/:id", ProductController.deleteProduct)
     .post("/search", SearchProductRules, ProductController.searchProduct)
+    .get("/order/name", ProductController.sortProductByName)
 
 module.exports = Router;

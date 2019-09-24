@@ -202,5 +202,15 @@ module.exports = {
             data: products,
             errors: false
         })
+    },
+    sortProductByName: async (req, res) => {
+        const products = await Product.query().orderBy("name")
+
+        return res.json({
+            message: "OKE",
+            status: 200,
+            data: products,
+            errors: false
+        })
     }
 };
