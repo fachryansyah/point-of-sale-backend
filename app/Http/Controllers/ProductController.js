@@ -3,10 +3,16 @@ const { raw } = require("objection")
 const fs = require('fs')
 const uuidv4 = require('uuid/v4')
 const Product = require("../../Models/Product")
+const ImageUpload = require("../../Helpers/ImageUpload")
 
 module.exports = {
+    /*
+    Get data product based on query string
+    @method GET
+    @param req.query : pageIndex, limit, search, sort, mode
+    @return Json
+    */
     getProduct: async (req, res) => {
-
         // first page
         let pageIndex = req.query.page ? req.query.page-1 : 0
         let limit = req.query.limit ? req.query.limit : 12
@@ -21,7 +27,6 @@ module.exports = {
         .orderBy(sort == "category" ? "categories.name" : `products.${sort}`, sortMode)
         .page(pageIndex, limit)
 
-
         return res.json({
             message: "OKE",
             status: 200,
@@ -29,6 +34,14 @@ module.exports = {
             error: false
         })
     },
+
+    /*
+    Create product with image
+    @header form-data
+    @method POST
+    @param req.body : name, description, image, category_id, price, qty
+    @return Json
+    */
     createProduct: async (req, res) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
@@ -59,12 +72,7 @@ module.exports = {
             })
         }
 
-        let imageFile = req.files.image
-        let imageMime = imageFile.mimetype.split("/")[1]
-        // generate random name for image file
-        const imageName = `${uuidv4()}.${imageMime}`
-        // move image file to upload folder
-        const moveImage = imageFile.mv(`public/upload/${imageName}`)
+        const imageName = await ImageUpload.upload(req.files.image)
 
         const insertProduct = await Product.query()
         .insert({
@@ -93,6 +101,14 @@ module.exports = {
             errors: false
         })
     },
+
+    /*
+    Update product with image
+    @header form-data
+    @method PUT
+    @param req.body : name, description, image (if exists), category_id, price, qty
+    @return Json
+    */
     updateProduct: async (req, res) => {
         // check user request
         const errors = validationResult(req)
@@ -119,12 +135,8 @@ module.exports = {
         if (req.files) {
             if (req.files.image) {
 
-                let imageFile = req.files.image
-                let imageMime = imageFile.mimetype.split("/")[1]
-                // generate random name for image file
-                const imageName = `${uuidv4()}.${imageMime}`
-                // move image file to upload folder
-                const moveImage = imageFile.mv(`public/upload/${imageName}`)
+                const imageName = await ImageUpload.upload(req.files.image)
+                
                 product = await Product.query()
                 .findById(req.params.id)
                 .patch({
@@ -165,6 +177,13 @@ module.exports = {
             errors  : false
         })
     },
+
+    /*
+    Delete product with related image
+    @method DELETE
+    @param req.params : id
+    @return Json
+    */
     deleteProduct: async (req, res) => {
 
         // get data product image
