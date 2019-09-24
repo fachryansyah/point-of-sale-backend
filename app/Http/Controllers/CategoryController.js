@@ -18,7 +18,7 @@ module.exports = {
                 message: "Validation error",
                 status: 304,
                 data: {},
-                errors: true
+                errors: errors.array()
             })
         }
 
@@ -29,6 +29,39 @@ module.exports = {
         if (category instanceof Category == false) {
             return res.json({
                 message: "Can't add category to db",
+                status: 500,
+                data: {},
+                erorrs: true
+            })
+        }
+
+        return res.json({
+            message: "OKE",
+            status: 200,
+            data: {},
+            erorrs: false
+        })
+    },
+    updateCategory: async (req, res) => {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.json({
+                message: "Validation error",
+                status: 304,
+                data: {},
+                errors: errors.array()
+            })
+        }
+
+        const category = await Category.query()
+        .findById(req.params.id)
+        .patch({
+            name: req.body.name
+        })
+
+        if (!category) {
+            return res.json({
+                message: "Can't update category to db",
                 status: 500,
                 data: {},
                 erorrs: true
