@@ -5,19 +5,12 @@ const Product = require("../../Models/Product")
 
 module.exports = {
     getProduct: async (req, res) => {
+
+        // first page
+        let pageIndex = req.query.page ? req.query.page-1 : 0
         const products = await Product.query().joinEager({
             category: true
-        })
-
-        //check if product available
-        if (products[0] instanceof Product == false) {
-            return res.json({
-                message: "No product available",
-                status: 201,
-                data: [],
-                error: false
-            })
-        }
+        }).page(pageIndex, 2)
 
         return res.json({
             message: "OKE",
@@ -183,11 +176,16 @@ module.exports = {
         })
     },
     searchProduct: async (req, res) => {
+
+        // first page
+        let pageIndex = req.query.page ? req.query.page-1 : 0
+
         const products = await Product.query()
         .where("name", "LIKE", "%" + req.body.keyword + "%")
         .orderBy("name")
+        .page(pageIndex, 2)
 
-        if (products[0] instanceof Product == false) {
+        if (!products) {
             return res.json({
                 message: "No product found",
                 status: 404,
@@ -204,7 +202,10 @@ module.exports = {
         })
     },
     sortProductByName: async (req, res) => {
-        const products = await Product.query().orderBy("name")
+        let pageIndex = req.query.page ? req.query.page-1 : 0
+        const products = await Product.query()
+        .orderBy("name")
+        .page(pageIndex, 2)
 
         return res.json({
             message: "OKE",
@@ -214,7 +215,10 @@ module.exports = {
         })
     },
     sortProductByUpdate: async (req, res) => {
-        const products = await Product.query().orderBy("updated_at")
+        let pageIndex = req.query.page ? req.query.page-1 : 0
+        const products = await Product.query()
+        .orderBy("updated_at")
+        .page(pageIndex, 2)
 
         return res.json({
             message: "OKE",
