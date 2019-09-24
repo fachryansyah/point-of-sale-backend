@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator")
+const { raw } = require("objection")
 const fs = require('fs')
 const uuidv4 = require('uuid/v4')
 const Product = require("../../Models/Product")
@@ -13,12 +14,20 @@ module.exports = {
         let sort = req.query.sort ? req.query.sort : "created_at"
         let sortMode = req.query.mode ? req.query.mode : "asc"
 
-        const products = await Product.query().joinEager({
-            category: true
-        })
+        // const products = await Product.query().joinEager({
+        //     category: true
+        // })
+        // .where("products.name", "LIKE", "%" + search + "%")
+        // .orderBy(sort, sortMode)
+        // .page(pageIndex, limit)
+
+        const products = await Product.query()
+        .select(raw("products.*, categories.name as category"))
+        .join("categories", "products.category_id", "=", "categories.id")
         .where("products.name", "LIKE", "%" + search + "%")
-        .orderBy(sort, sortMode)
+        .orderBy(sort == "category" ? "categories.name" : `products.${sort}`, sortMode)
         .page(pageIndex, limit)
+
 
         return res.json({
             message: "OKE",
