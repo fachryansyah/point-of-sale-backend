@@ -10,6 +10,7 @@ const CreateProductRules = [
     body("price", "field price maximal 16 digits").isLength({max:16}),
     body("price", "field price minimum 1 ").isLength({min:1}),
     body("qty", "field qty can't be null").exists(),
+    body("qty", "quantity can't be zero").isLength({min: 0})
 ]
 
 module.exports = CreateProductRules;
