@@ -74,5 +74,24 @@ module.exports = {
             data: {},
             erorrs: false
         })
+    },
+    deleteCategory: async (req, res) => {
+        const category = await Category.query().deleteById(req.params.id)
+
+        if (!category) {
+            return res.json({
+                message: "Can't delete category to db",
+                status: 500,
+                data: {},
+                erorrs: true
+            })
+        }
+
+        return res.json({
+            message: "OKE",
+            status: 200,
+            data: {},
+            erorrs: false
+        })
     }
 };

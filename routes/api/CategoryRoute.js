@@ -8,5 +8,6 @@ Router
     .get("/", CategoryController.getCategory)
     .post("/create", CreateCategoryRules, CategoryController.createCategory)
     .put("/update/:id", UpdateCategoryRules, CategoryController.updateCategory)
+    .delete("/delete/:id", CategoryController.deleteCategory)
 
 module.exports = Router;
