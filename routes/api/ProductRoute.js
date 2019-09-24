@@ -14,5 +14,6 @@ Router
     .delete("/delete/:id", ProductController.deleteProduct)
     .post("/search", SearchProductRules, ProductController.searchProduct)
     .get("/order/name", ProductController.sortProductByName)
+    .get("/order/update", ProductController.sortProductByUpdate)
 
 module.exports = Router;

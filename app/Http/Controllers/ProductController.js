@@ -212,5 +212,15 @@ module.exports = {
             data: products,
             errors: false
         })
+    },
+    sortProductByUpdate: async (req, res) => {
+        const products = await Product.query().orderBy("updated_at")
+
+        return res.json({
+            message: "OKE",
+            status: 200,
+            data: products,
+            errors: false
+        })
     }
 };
