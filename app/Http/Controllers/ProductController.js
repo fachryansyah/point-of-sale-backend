@@ -103,6 +103,15 @@ module.exports = {
             })
         }
 
+        if (req.body.qty < 0) {
+            return res.json({
+                message: "quantity can't be zero",
+                status: 304,
+                data: {},
+                errors: errors.array()
+            })
+        }
+
         let product
 
         if (req.files) {
@@ -122,7 +131,7 @@ module.exports = {
                     image       : imageName,
                     category_id : req.body.category_id,
                     price       : req.body.price,
-                    qty         : req.body.qty
+                    qty         : (req.body.qty < 0 ? 0 : req.body.qty)
                 })
 
             }
@@ -134,7 +143,7 @@ module.exports = {
                 description : req.body.description,
                 category_id : req.body.category_id,
                 price       : req.body.price,
-                qty         : req.body.qty
+                qty         : (req.body.qty < 0 ? 0 : req.body.qty)
             })
         }
 
