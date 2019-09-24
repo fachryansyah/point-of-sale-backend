@@ -5,10 +5,12 @@ const Product = require("../../Models/Product")
 
 module.exports = {
     getProduct: async (req, res) => {
-        const products = await Product.query()
+        const products = await Product.query().joinEager({
+            category: true
+        })
 
         //check if product available
-        if (products instanceof Product == false) {
+        if (products[0] instanceof Product == false) {
             return res.json({
                 message: "No product available",
                 status: 201,
