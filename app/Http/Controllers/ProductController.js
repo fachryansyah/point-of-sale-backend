@@ -14,13 +14,6 @@ module.exports = {
         let sort = req.query.sort ? req.query.sort : "created_at"
         let sortMode = req.query.mode ? req.query.mode : "asc"
 
-        // const products = await Product.query().joinEager({
-        //     category: true
-        // })
-        // .where("products.name", "LIKE", "%" + search + "%")
-        // .orderBy(sort, sortMode)
-        // .page(pageIndex, limit)
-
         const products = await Product.query()
         .select(raw("products.*, categories.name as category"))
         .join("categories", "products.category_id", "=", "categories.id")
