@@ -8,9 +8,17 @@ module.exports = {
 
         // first page
         let pageIndex = req.query.page ? req.query.page-1 : 0
+        let limit = req.query.limit ? req.query.limit : 12
+        let search = req.query.search ? req.query.search : ""
+        let sort = req.query.sort ? req.query.sort : "created_at"
+        let sortMode = req.query.mode ? req.query.mode : "asc"
+
         const products = await Product.query().joinEager({
             category: true
-        }).page(pageIndex, 2)
+        })
+        .where("products.name", "LIKE", "%" + search + "%")
+        .orderBy(sort, sortMode)
+        .page(pageIndex, limit)
 
         return res.json({
             message: "OKE",
@@ -186,20 +194,10 @@ module.exports = {
         .page(pageIndex, 2)
 
         if (!products) {
-            return res.json({
-                message: "No product found",
-                status: 404,
-                data: {},
-                errors: false
-            })
+            return false
         }
 
-        return res.json({
-            message: "OKE",
-            status: 200,
-            data: products,
-            errors: false
-        })
+        return products
     },
     sortProductByName: async (req, res) => {
         let pageIndex = req.query.page ? req.query.page-1 : 0
@@ -207,12 +205,7 @@ module.exports = {
         .orderBy("name")
         .page(pageIndex, 2)
 
-        return res.json({
-            message: "OKE",
-            status: 200,
-            data: products,
-            errors: false
-        })
+        return products
     },
     sortProductByUpdate: async (req, res) => {
         let pageIndex = req.query.page ? req.query.page-1 : 0
@@ -220,11 +213,6 @@ module.exports = {
         .orderBy("updated_at")
         .page(pageIndex, 2)
 
-        return res.json({
-            message: "OKE",
-            status: 200,
-            data: products,
-            errors: false
-        })
+        return products
     }
 };
