@@ -181,5 +181,26 @@ module.exports = {
             data: {},
             errors: false
         })
+    },
+    searchProduct: async (req, res) => {
+        const products = await Product.query()
+        .where("name", "LIKE", "%" + req.body.keyword + "%")
+        .orderBy("name")
+
+        if (products[0] instanceof Product == false) {
+            return res.json({
+                message: "No product found",
+                status: 404,
+                data: {},
+                errors: false
+            })
+        }
+
+        return res.json({
+            message: "OKE",
+            status: 200,
+            data: products,
+            errors: false
+        })
     }
 };
