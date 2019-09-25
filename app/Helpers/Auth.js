@@ -7,12 +7,10 @@ module.exports = {
     user: async (req) => {
         let apiKey = req.headers.authorization, decoded;
         if (!apiKey) {
-            return res.json({
+            return {
                 message: "No api key has been set",
-                status: 403,
-                data: {},
-                errors: true
-            })
+                error: true
+            }
         }
 
         apiKey = apiKey.split(' ')[1]
