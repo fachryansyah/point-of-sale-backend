@@ -7,7 +7,7 @@ module.exports = {
     /*
     Retrive Authenticated user data
     @param req.header : authorization
-    @return user
+    @return user data
     */
     user: async (req) => {
         let apiKey = req.headers.authorization, decoded;
@@ -36,6 +36,11 @@ module.exports = {
     check: async (req) => {
 
     },
+    /*
+    Authenticate user with email and password
+    @param credential : email, password
+    @return user data
+    */
     attempt: async (credential) => {
 
         const user = await User.query()
@@ -68,6 +73,11 @@ module.exports = {
 
         return updatedUser
     },
+    /*
+    Register user
+    @param req.body : firstname, lastname, email, password
+    @return boolean
+    */
     register: async (req) => {
         const { firstname, lastname, email, password } = req.body
         const fullname = firstname + " " + lastname
