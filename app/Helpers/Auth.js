@@ -4,6 +4,11 @@ const bcrypt = require("bcrypt")
 const User = require("../Models/User")
 
 module.exports = {
+    /*
+    Retrive Authenticated user data
+    @param req.header : authorization
+    @return user
+    */
     user: async (req) => {
         let apiKey = req.headers.authorization, decoded;
         if (!apiKey) {

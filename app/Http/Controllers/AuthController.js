@@ -1,6 +1,11 @@
 const Auth = require("../../Helpers/Auth")
 
 module.exports = {
+    /*
+    Authenticated user based on Email and Password
+    @param req.body : Email, password
+    @return Json
+    */
     login: async (req, res) => {
 
         const credential = {
@@ -9,7 +14,7 @@ module.exports = {
         }
 
         const isLoggedIn = await Auth.attempt(credential)
-        
+
         if (isLoggedIn.error) {
             return res.json({
                 message: isLoggedIn.message,
@@ -26,6 +31,11 @@ module.exports = {
             errors: false
         })
     },
+    /*
+    Register user
+    @param req.body : firstname, lastname, email, password
+    @return Json
+    */
     register: async (req, res) => {
         const register = await Auth.register(req)
 
