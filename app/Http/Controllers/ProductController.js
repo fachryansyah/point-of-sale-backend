@@ -72,13 +72,22 @@ module.exports = {
             })
         }
 
-        const imageName = await ImageUpload.upload(req.files.image)
+        const imageUpload = await ImageUpload.upload(req.files.image)
+
+        if (imageUpload.error) {
+            return res.json({
+                message: imageUpload.message,
+                status: 500,
+                data: {},
+                errors: true
+            })
+        }
 
         const insertProduct = await Product.query()
         .insert({
             name        : req.body.name,
             description : req.body.description,
-            image       : imageName,
+            image       : imageUpload,
             category_id : req.body.category_id,
             price       : req.body.price,
             qty         : 0
