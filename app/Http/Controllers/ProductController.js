@@ -136,7 +136,7 @@ module.exports = {
             if (req.files.image) {
 
                 const imageName = await ImageUpload.upload(req.files.image)
-                
+
                 product = await Product.query()
                 .findById(req.params.id)
                 .patch({
