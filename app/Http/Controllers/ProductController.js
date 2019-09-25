@@ -201,7 +201,16 @@ module.exports = {
         .findById(req.params.id)
 
         // delete related image
-        await fs.unlinkSync(`public/upload/${productImage.image}`)
+        try {
+            const deleteImage = await fs.unlinkSync(`public/images/${productImage.image}`)
+        } catch (e) {
+            return res.json({
+                message: "Can't delete product from db",
+                status: 500,
+                data: {},
+                errors: true
+            })
+        }
 
         const product = await Product.query()
         .deleteById(req.params.id)
@@ -222,36 +231,59 @@ module.exports = {
             errors: false
         })
     },
-    searchProduct: async (req, res) => {
+    patchQtyProduct: async (req, res) => {
+        const { action, qty } = req.query
 
-        // first page
-        let pageIndex = req.query.page ? req.query.page-1 : 0
+        // parse input qty to integer
+        let qtyProduct = parseInt(qty)
 
-        const products = await Product.query()
-        .where("name", "LIKE", "%" + req.body.keyword + "%")
-        .orderBy("name")
-        .page(pageIndex, 2)
-
-        if (!products) {
-            return false
+        // check user request
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.json({
+                message: "Validation errors",
+                status: 304,
+                data: {},
+                errors: errors.array()
+            })
         }
 
-        return products
-    },
-    sortProductByName: async (req, res) => {
-        let pageIndex = req.query.page ? req.query.page-1 : 0
-        const products = await Product.query()
-        .orderBy("name")
-        .page(pageIndex, 2)
+        const product = await Product.query()
+        .findById(req.params.id)
 
-        return products
-    },
-    sortProductByUpdate: async (req, res) => {
-        let pageIndex = req.query.page ? req.query.page-1 : 0
-        const products = await Product.query()
-        .orderBy("updated_at")
-        .page(pageIndex, 2)
+        let countQty = parseInt(product.qty)
 
-        return products
+        switch (action) {
+            case "add":
+                countQty = product.qty + qtyProduct
+                break;
+            case "reduce":
+                countQty = (product.qty - qty < 0 ? 0 : product.qty - qtyProduct)
+                break;
+            default:
+                countQty = product.qty
+        }
+
+        const updateQty = await Product.query()
+        .findById(req.params.id)
+        .patch({
+            qty: countQty
+        })
+
+        if (!updateQty) {
+            return res.json({
+                message: "Can't update qty to product",
+                status: 500,
+                data: {},
+                errors: false
+            })
+        }
+
+        return res.json({
+            message: "OKE",
+            status: 200,
+            data: {},
+            errors: false
+        })
     }
 };

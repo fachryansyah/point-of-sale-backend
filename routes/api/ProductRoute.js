@@ -8,15 +8,13 @@ const ApiAuth = require("../../app/Http/Middleware/ApiAuth")
 // middleware request rules
 const CreateProductRules = require("../../app/Http/Rules/Product/CreateProductRules")
 const UpdateProductRules = require("../../app/Http/Rules/Product/UpdateProductRules")
-const SearchProductRules = require("../../app/Http/Rules/Product/SearchProductRules")
+const PatchQtyRules = require("../../app/Http/Rules/Product/PatchQtyRules")
 
 Router
     .get("/", ProductController.getProduct)
-    .post("/create", CreateProductRules, ProductController.createProduct)
-    .put("/update/:id", UpdateProductRules, ProductController.updateProduct)
-    .delete("/delete/:id", ProductController.deleteProduct)
-    // .post("/search", SearchProductRules, ProductController.searchProduct)
-    // .get("/order/name", ProductController.sortProductByName)
-    // .get("/order/update", ProductController.sortProductByUpdate)
+    .post("/", CreateProductRules, ProductController.createProduct)
+    .put("/:id", UpdateProductRules, ProductController.updateProduct)
+    .delete("/:id", ProductController.deleteProduct)
+    .patch("/qty/:id", PatchQtyRules, ProductController.patchQtyProduct)
 
 module.exports = Router;
