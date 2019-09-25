@@ -15,8 +15,8 @@ Router
     .post("/create", CreateProductRules, ProductController.createProduct)
     .put("/update/:id", UpdateProductRules, ProductController.updateProduct)
     .delete("/delete/:id", ProductController.deleteProduct)
-    .post("/search", SearchProductRules, ProductController.searchProduct)
-    .get("/order/name", ProductController.sortProductByName)
-    .get("/order/update", ProductController.sortProductByUpdate)
+    // .post("/search", SearchProductRules, ProductController.searchProduct)
+    // .get("/order/name", ProductController.sortProductByName)
+    // .get("/order/update", ProductController.sortProductByUpdate)
 
 module.exports = Router;
