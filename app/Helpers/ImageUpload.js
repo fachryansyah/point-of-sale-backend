@@ -4,8 +4,8 @@ module.exports = {
     upload: async (image) => {
         let imageFile = image
         let imageMime = imageFile.mimetype.split("/")[1]
-        let isImage = ["png", "jpg", "jpeg"].includes(imageMime)
-        
+        let isImage = ["png", "jpg", "jpeg", "svg", "gif"].includes(imageMime)
+
         if (!isImage) {
             return {
                 message: `please upload an image file not ${imageMime} file`,
