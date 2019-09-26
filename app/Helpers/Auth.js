@@ -10,7 +10,10 @@ module.exports = {
     @return user data
     */
     user: async (req) => {
+        // get api key, and set variable decoded
         let apiKey = req.headers.authorization, decoded;
+
+        // check if apiKey is set in header
         if (!apiKey) {
             return {
                 message: "No api key has been set",
@@ -18,6 +21,7 @@ module.exports = {
             }
         }
 
+        // get the apiKey split by whitespace
         apiKey = apiKey.split(' ')[1]
 
         try {
@@ -26,8 +30,10 @@ module.exports = {
             return false
         }
 
+        // getting user info by id from apiKey
         const user = await User.query().findById(decoded.id)
 
+        // remove object id, and password
         delete user["id"]
         delete user["password"]
 
@@ -62,16 +68,14 @@ module.exports = {
             }
         }
 
-        const token = await jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET)
-        console.log(token)
-        const updatedUser = await User.query().patchAndFetchById(user.id, {
-            api_key : token
-        })
+        // generate new user token
+        await jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET)
 
-        delete updatedUser["id"]
-        delete updatedUser["password"]
+        // remove object id, and password
+        delete user["id"]
+        delete user["password"]
 
-        return updatedUser
+        return user
     },
     /*
     Register user
@@ -79,10 +83,13 @@ module.exports = {
     @return boolean
     */
     register: async (req) => {
+        // getting required fields
         const { firstname, lastname, email, password } = req.body
+
         const fullname = firstname + " " + lastname
         const hashPassword = await bcrypt.hash(password, 14)
 
+        // insert new user to db
         const user = await User.query().insert({
             avatar: "https://ui-avatars.com/api/?size=256&name=" + fullname,
             firstname,
@@ -91,6 +98,7 @@ module.exports = {
             password: hashPassword
         })
 
+        // check if user has been insert to db
         if (user instanceof User == false) {
             return false;
         }
