@@ -13,13 +13,14 @@ module.exports = {
     @return Json
     */
     getProduct: async (req, res) => {
-        // first page
-        let pageIndex = req.query.page ? req.query.page-1 : 0
-        let limit = req.query.limit ? req.query.limit : 12
-        let search = req.query.search ? req.query.search : ""
-        let sort = req.query.sort ? req.query.sort : "created_at"
-        let sortMode = req.query.mode ? req.query.mode : "asc"
 
+        let pageIndex = req.query.page ? req.query.page-1 : 0 // get page index for validation
+        let limit = req.query.limit ? req.query.limit : 12 // set limit data
+        let search = req.query.search ? req.query.search : "" // get input search
+        let sort = req.query.sort ? req.query.sort : "created_at" // set sort data
+        let sortMode = req.query.mode ? req.query.mode : "asc" // set sort mode with default desc
+
+        // run the query with these value
         const products = await Product.query()
         .select(raw("products.*, categories.name as category"))
         .join("categories", "products.category_id", "=", "categories.id")
@@ -43,6 +44,7 @@ module.exports = {
     @return Json
     */
     createProduct: async (req, res) => {
+        // check if request body does not match with rules
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             return res.json({
