@@ -25,17 +25,17 @@ This is simple point of sales backend application made with expressjs.
 And this project is open source with a [public repository][dill]
  on GitHub.
 ___
-<br>
+
 ### Requirments
 
 * [Nodejs](https://nodejs.org/en/) v10 LTS version
 * [Npm](https://www.npmjs.com/get-npm) package / [Yarn](https://yarnpkg.com/lang/en/docs/install/#mac-stable) package
 * [Mysql](https://www.mysql.com/downloads/) database
 ___
-<br>
+
 ### Installation
 ---
-<br>
+
 ##### Clone
 
 ```sh
@@ -43,7 +43,7 @@ $ git clone https://github.com/fachryansyah/point-of-sale-backend
 $ cd point-of-sale-backend
 ```
 ---
-<br>
+
 ##### Set Environment
 
 ```sh
@@ -51,7 +51,7 @@ $ cp .env.example .env
 $ vim .env
 ```
 ---
-<br>
+
 ##### Run Server
 
 ```sh
@@ -59,7 +59,7 @@ $ npm serve
 ```
 
 ___
-<br>
+
 ### Dependencies
 
 | Plugin | README |
