@@ -11,12 +11,11 @@
 *  [Requirments](https://github.com/fachryansyah/point-of-sale-backend#Requirments)
 *  [Configuration](https://github.com/fachryansyah/point-of-sale-backend#Configuration)
 *  [Dependencies](https://github.com/fachryansyah/point-of-sale-backend#Dependencies)
-    *  [clone](https://github.com/fachryansyah/point-of-sale-backend#clone)
-    *  [set environment](https://github.com/fachryansyah/point-of-sale-backend#set environment)
-    *  [install depedencies](https://github.com/fachryansyah/point-of-sale-backend#install depedencies)
-    *  [run server](https://github.com/fachryansyah/point-of-sale-backend#run server)
+    *  [clone](https://github.com/fachryansyah/point-of-sale-backend#Clone)
+    *  [environment](https://github.com/fachryansyah/point-of-sale-backend#Environment)
+    *  [serve](https://github.com/fachryansyah/point-of-sale-backend#Serve)
 * [Dependencies](https://github.com/fachryansyah/point-of-sale-backend#Dependencies)
-* Api Docs
+* [Api Docs](https://github.com/fachryansyah/point-of-sale-backend#Api-Docs)
 * License
 ___
 ### Intro
@@ -45,7 +44,7 @@ $ cd point-of-sale-backend
 ```
 ---
 
-##### Set Environment
+##### Environment
 
 ```sh
 $ cp .env.example .env
@@ -53,14 +52,14 @@ $ vim .env
 ```
 ---
 
-##### Set Environment
+##### Install Depedencies
 
 ```sh
 $ npm install
 ```
 ---
 
-##### Run Server
+##### Serve
 
 ```sh
 $ npm serve
