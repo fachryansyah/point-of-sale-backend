@@ -7,14 +7,14 @@
 
 ## Table Of Contents
 
-*  Intro
-*  Requirments
-*  Configuration
-*  Instalation
-    *  clone
-    *  set environment
-    *  install depedencies
-    *  run server
+*  [Intro](https://github.com/fachryansyah/point-of-sale-backend#Intro)
+*  [Requirments](https://github.com/fachryansyah/point-of-sale-backend#Requirments)
+*  [Configuration](https://github.com/fachryansyah/point-of-sale-backend#Configuration)
+*  [Dependencies](https://github.com/fachryansyah/point-of-sale-backend#Dependencies)
+    *  [clone](https://github.com/fachryansyah/point-of-sale-backend#clone)
+    *  [set environment](https://github.com/fachryansyah/point-of-sale-backend#set environment)
+    *  [install depedencies](https://github.com/fachryansyah/point-of-sale-backend#install depedencies)
+    *  [run server](https://github.com/fachryansyah/point-of-sale-backend#run server)
 * [Dependencies](https://github.com/fachryansyah/point-of-sale-backend#Dependencies)
 * Api Docs
 * License
