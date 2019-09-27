@@ -13,6 +13,7 @@
 *  Instalation
     *  clone
     *  set environment
+    *  install depedencies
     *  run server
 * Dependencies
 * Api Docs
@@ -49,6 +50,13 @@ $ cd point-of-sale-backend
 ```sh
 $ cp .env.example .env
 $ vim .env
+```
+---
+
+##### Set Environment
+
+```sh
+$ npm install
 ```
 ---
 
