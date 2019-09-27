@@ -16,7 +16,7 @@
     *  [serve](https://github.com/fachryansyah/point-of-sale-backend#Serve)
 * [Dependencies](https://github.com/fachryansyah/point-of-sale-backend#Dependencies)
 * [Api Docs](https://github.com/fachryansyah/point-of-sale-backend#Api-Docs)
-* License
+* [License](https://github.com/fachryansyah/point-of-sale-backend#License)
 ___
 ### Intro
 
