@@ -92,7 +92,7 @@ module.exports = {
             image       : imageUpload,
             category_id : req.body.category_id,
             price       : req.body.price,
-            qty         : 0
+            qty         : req.body.qty
         })
 
         //check if product has successfully added to db
