@@ -220,6 +220,15 @@ module.exports = {
         .select("image")
         .findById(req.params.id)
 
+        if (productImage instanceof Product == false) {
+            return res.json({
+                message: "can't find  product",
+                status: 404,
+                data: {},
+                errors: false
+            })
+        }
+
         // delete related image
         Image.delete(productImage.image)
 
