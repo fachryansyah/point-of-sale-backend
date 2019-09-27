@@ -11,3 +11,5 @@ const RegisterRules = [
     body("password", "field password maximal 50 character").isLength({max: 50}),
     body("password", "field password minimum 6 character").isLength({min: 6})
 ]
+
+module.exports = RegisterRules;
