@@ -49,7 +49,7 @@ module.exports = {
     */
     attempt: async (credential) => {
 
-        const user = await User.query()
+        let user = await User.query()
         .findOne({ email: credential.email })
 
         if (user instanceof User == false) {
@@ -69,7 +69,11 @@ module.exports = {
         }
 
         // generate new user token
-        await jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET)
+        const apiKey = await jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET)
+
+
+        user = user.toJSON() // conver user to json
+        user.apiKey = apiKey // add apiKey in user data
 
         // remove object id, and password
         delete user["id"]

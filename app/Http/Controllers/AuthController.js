@@ -27,6 +27,7 @@ module.exports = {
             })
         }
 
+        // return res.json({isLoggedIn})
         return res.json({
             message: "OKE logged in",
             status: 200,
