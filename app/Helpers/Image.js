@@ -1,4 +1,5 @@
 const uuidv4 = require('uuid/v4')
+const fs = require("fs")
 
 module.exports = {
     upload: async (image) => {
@@ -28,5 +29,14 @@ module.exports = {
         }
 
         return imageName
+    },
+    delete: async (imageName) => {
+        try {
+            const deleteImage = await fs.unlinkSync(`public/images/${imageName}`)
+            return true
+        } catch (e) {
+            console.log(e.message)
+            return false
+        }
     }
 };

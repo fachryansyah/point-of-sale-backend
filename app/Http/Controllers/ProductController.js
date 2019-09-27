@@ -3,7 +3,7 @@ const { raw } = require("objection")
 const fs = require('fs')
 const uuidv4 = require('uuid/v4')
 const Product = require("../../Models/Product")
-const ImageUpload = require("../../Helpers/ImageUpload")
+const Image = require("../../Helpers/Image")
 
 module.exports = {
     /*
@@ -74,7 +74,7 @@ module.exports = {
             })
         }
 
-        const imageUpload = await ImageUpload.upload(req.files.image)
+        const imageUpload = await Image.upload(req.files.image)
 
         if (imageUpload.error) {
             return res.json({
@@ -141,14 +141,32 @@ module.exports = {
             })
         }
 
-        let product
+        let updateProduct
 
         if (req.files) {
             if (req.files.image) {
 
-                const imageName = await ImageUpload.upload(req.files.image)
+                const product = await Product.query().findById(req.params.id)
 
-                product = await Product.query()
+                // delete the previous image
+                const deleteImage = await Image.delete(product.image)
+                if (!deleteImage) {
+                    return res.json({message: "cant delet image"})
+                }
+
+                // upload new image to server
+                const imageName = await Image.upload(req.files.image)
+                //check if successfully uploaded
+                if (!imageName) {
+                    return res.json({
+                        message: "Can't upload that image",
+                        status: 500,
+                        data: {},
+                        errors: true
+                    })
+                }
+
+                updateProduct = await Product.query()
                 .findById(req.params.id)
                 .patch({
                     name        : req.body.name,
@@ -161,7 +179,7 @@ module.exports = {
 
             }
         }else{
-            product = await Product.query()
+            updateProduct = await Product.query()
             .findById(req.params.id)
             .patch({
                 name        : req.body.name,
@@ -172,7 +190,7 @@ module.exports = {
             })
         }
 
-        if (!product) {
+        if (!updateProduct) {
             return res.json({
                 message : "Can't update product to db",
                 status  : 500,
@@ -203,16 +221,7 @@ module.exports = {
         .findById(req.params.id)
 
         // delete related image
-        try {
-            const deleteImage = await fs.unlinkSync(`public/images/${productImage.image}`)
-        } catch (e) {
-            return res.json({
-                message: "Can't delete product from db",
-                status: 500,
-                data: {},
-                errors: true
-            })
-        }
+        Image.delete(productImage.image)
 
         const product = await Product.query()
         .deleteById(req.params.id)
