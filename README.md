@@ -72,17 +72,15 @@ ___
 | Bcrypt | [package/bcrypt](https://www.npmjs.com/package/bcrypt) |
 | Cors | [cors/blob/master/README.md](https://github.com/expressjs/cors/blob/master/README.md) |
 | UUID | [package/uuid](https://www.npmjs.com/package/uuid) |
-| Dot Env | [[package/dotenv](https://www.npmjs.com/package/dotenv)][PlGa] |
+| Dot Env | [package/dotenv](https://www.npmjs.com/package/dotenv) |
 
 
 ___
 ### Api Docs
 
-See the route of Api
-[Postman Docs API](https://documenter.getpostman.com/view/1720373/SVn3rua2?version=latest)
+See the route of Api with [Postman Docs API](https://documenter.getpostman.com/view/1720373/SVn3rua2?version=latest)
 
-Click and run on Postman
-[Open on Postman](https://explore.postman.com/templates/3884)
+Click and run on Postman, [Open on Postman](https://explore.postman.com/templates/3884)
 
 License
 ----
