@@ -15,7 +15,7 @@
     *  set environment
     *  install depedencies
     *  run server
-* Dependencies
+* [Dependencies](https://github.com/fachryansyah/point-of-sale-backend#Dependencies)
 * Api Docs
 * License
 ___
