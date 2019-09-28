@@ -14,19 +14,20 @@ const ApiAuth = async (req, res, next) => {
     }
 
     apiKey = apiKey.split(' ')[1]
+    let verify = {}
 
     try {
-        const verify = jwt.verify(apiKey, process.env.JWT_SECRET)
+        verify = await jwt.verify(apiKey, process.env.JWT_SECRET)
     } catch (e) {
         return res.json({
-            message: err.message,
+            message: "api key not valid",
             status: 403,
             data: {},
             errors: true
         })
     }
 
-    const user = User.query().findById(verify.id)
+    const user = await User.query().findById(verify.id)
     if (user instanceof User == false) {
         return res.json({
             message: "User not found",

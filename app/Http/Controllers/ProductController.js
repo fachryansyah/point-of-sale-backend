@@ -278,7 +278,17 @@ module.exports = {
                 countQty = product.qty + qtyProduct
                 break;
             case "reduce":
-                countQty = (product.qty - qty < 0 ? 0 : product.qty - qtyProduct)
+                if (product.qty - qty < 0) {
+                    countQty = 0
+                    return res.json({
+                        message: "Qty to lower",
+                        status: 500,
+                        data: {},
+                        errors: false
+                    })
+                }
+                countQty = product.qty - qtyProduct
+                // countQty = (product.qty - qty < 0 ? 0 : product.qty - qtyProduct)
                 break;
             default:
                 countQty = product.qty

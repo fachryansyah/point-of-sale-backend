@@ -11,10 +11,10 @@ const UpdateProductRules = require("../../app/Http/Rules/Product/UpdateProductRu
 const PatchQtyRules = require("../../app/Http/Rules/Product/PatchQtyRules")
 
 Router
-    .get("/", ProductController.getProduct)
-    .post("/", CreateProductRules, ProductController.createProduct)
-    .put("/:id", UpdateProductRules, ProductController.updateProduct)
-    .delete("/:id", ProductController.deleteProduct)
-    .patch("/qty/:id", PatchQtyRules, ProductController.patchQtyProduct)
+    .get("/", ApiAuth, ProductController.getProduct)
+    .post("/", [CreateProductRules, ApiAuth], ProductController.createProduct)
+    .put("/:id", [UpdateProductRules, ApiAuth], ProductController.updateProduct)
+    .delete("/:id", ApiAuth, ProductController.deleteProduct)
+    .patch("/qty/:id", [PatchQtyRules, ApiAuth], ProductController.patchQtyProduct)
 
 module.exports = Router;
