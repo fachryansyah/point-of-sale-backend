@@ -6,7 +6,7 @@ const fileUpload = require("express-fileupload")
 const cors = require("cors")
 const apiRoutes = require("./routes/Api")
 
-const port = process.env.SERVER_PORT || 1337
+const port = process.env.PORT || 1337
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
