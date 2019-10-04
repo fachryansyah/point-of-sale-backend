@@ -34,7 +34,7 @@ module.exports = {
         const user = await User.query().findById(decoded.id)
 
         // remove object id, and password
-        delete user["id"]
+        // delete user["id"]
         delete user["password"]
 
         return user
