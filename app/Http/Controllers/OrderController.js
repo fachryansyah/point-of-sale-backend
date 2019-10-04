@@ -1,5 +1,6 @@
 const Order = require('../../Models/Order')
 const OrderItem = require('../../Models/OrderItem')
+const Product = require('../../Models/Product')
 const Auth = require("../../Helpers/Auth")
 
 module.exports = {
@@ -75,15 +76,25 @@ module.exports = {
             })
         }
 
-        console.log(items)
 
         items.forEach( async (val, key) => {
+
             await OrderItem.query().insert({
                 order_id: order.id,
                 product_id: val.id,
                 qty: val.qty,
                 total_price: val.price
             })
+
+            let product = await Product.query().findById(val.id)
+
+            let quantity = product.qty - val.qty
+
+            await Product.query().findById(val.id)
+            .patch({
+                qty : quantity
+            })
+
         })
 
         const orderItem = await OrderItem.query()
