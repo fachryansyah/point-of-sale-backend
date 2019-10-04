@@ -21,8 +21,8 @@ module.exports = {
         const imageName = `${uuidv4()}.${imageMime}`
 
         //check public folder is exist
-        if (await fs.existsSync('public/')) {
-            await fs.mkdirSync('public/')
+        if (await fs.existsSync('public')) {
+            await fs.mkdirSync('public')
             await fs.mkdirSync('public/images')
         }
 
