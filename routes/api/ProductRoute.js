@@ -12,6 +12,7 @@ const PatchQtyRules = require("../../app/Http/Rules/Product/PatchQtyRules")
 
 Router
     .get("/", ApiAuth, ProductController.getProduct)
+    .get("/:id", ApiAuth, ProductController.showProduct)
     .post("/", [CreateProductRules, ApiAuth], ProductController.createProduct)
     .put("/:id", [UpdateProductRules, ApiAuth], ProductController.updateProduct)
     .delete("/:id", ApiAuth, ProductController.deleteProduct)

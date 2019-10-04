@@ -15,18 +15,31 @@ module.exports = {
     getProduct: async (req, res) => {
 
         let pageIndex = req.query.page ? req.query.page-1 : 0 // get page index for validation
-        let limit = req.query.limit ? req.query.limit : 12 // set limit data
+        let limit = req.query.limit ? req.query.limit : 2 // set limit data
         let search = req.query.search ? req.query.search : "" // get input search
         let sort = req.query.sort ? req.query.sort : "created_at" // set sort data
         let sortMode = req.query.mode ? req.query.mode : "asc" // set sort mode with default desc
 
         // run the query with these value
-        const products = await Product.query()
+        let products = await Product.query()
         .select(raw("products.*, categories.name as category"))
         .join("categories", "products.category_id", "=", "categories.id")
         .where("products.name", "LIKE", "%" + search + "%")
         .orderBy(sort == "category" ? "categories.name" : `products.${sort}`, sortMode)
         .page(pageIndex, limit)
+
+        let totalProduct = await Product.query().resultSize()
+
+        if (search.length > 1) {
+            totalProduct = products.results.length
+        }
+
+        const totalPage = Math.round(totalProduct / limit)
+        const currentPage = req.query.page ? parseInt(req.query.page) : 1
+
+        // products = products.toJSON()
+        products.totalPage = totalPage
+        products.currentPage = currentPage
 
         return res.json({
             message: "OKE",
@@ -58,19 +71,31 @@ module.exports = {
         //check if has image file
         if (!req.files) {
             return res.json({
-                message: "No image choosen",
+                message: "Validation error",
                 status: 304,
                 data: {},
-                errors: true
+                errors: [
+                    {
+                        location: "body",
+                        msg: "field image can't be null",
+                        param: "image"
+                    }
+                ]
             })
         }
 
         if (!req.files.image) {
             return res.json({
-                message: "Can't find key image",
+                message: "Validation error",
                 status: 304,
                 data: {},
-                errors: true
+                errors: [
+                    {
+                        location: "body",
+                        msg: "Can't find key image",
+                        param: "image"
+                    }
+                ]
             })
         }
 
@@ -78,10 +103,16 @@ module.exports = {
 
         if (imageUpload.error) {
             return res.json({
-                message: imageUpload.message,
-                status: 500,
+                message: "Validation error",
+                status: 304,
                 data: {},
-                errors: true
+                errors: [
+                    {
+                        location: "body",
+                        msg: imageUpload.message,
+                        param: "image"
+                    }
+                ]
             })
         }
 
@@ -109,6 +140,26 @@ module.exports = {
             message: "OKE",
             status: 200,
             data: insertProduct,
+            errors: false
+        })
+    },
+
+    showProduct: async (req, res) => {
+        const product = await Product.query().findById(req.params.id)
+
+        if (product instanceof Product == false) {
+            return res.json({
+                message: "Product not found",
+                status: 404,
+                data: {},
+                errors: true
+            })
+        }
+
+        return res.json({
+            message: "OKE!",
+            status: 200,
+            data: product,
             errors: false
         })
     },

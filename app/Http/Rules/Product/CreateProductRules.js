@@ -4,19 +4,24 @@ const Product = require("../../../Models/Product")
 const CreateProductRules = [
     body("name", "field name cant't be null").exists(),
     body("name", "field name maximal 110 character").isLength({max: 110}),
-    body("name", "Product already exists").custom( async (value) => {
-        const product = await Product.query().findOne({
-            name: value
-        })
+    body("name").custom( async (value) => {
 
-        // check if product is exists
-        if (product instanceof Product) {
-            console.log("nama sudah dipakai")
-            throw new Error('Product already exists');
-        }else{
-            console.log("nama belum dipakai")
-            return true
+        if (typeof value != "undefined") {
+            const product = await Product.query().findOne({
+                name: value
+            })
+
+            // check if product is exists
+            if (product instanceof Product) {
+                console.log("nama sudah dipakai")
+                throw new Error('Product already exists');
+            }else{
+                console.log("nama belum dipakai")
+                return true
+            }
         }
+        return true
+
     }),
     body("description", "field description can't be null").exists(),
     body("description", "field description maximal 1000 character").isLength({max: 1000}),
