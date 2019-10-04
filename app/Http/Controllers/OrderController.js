@@ -62,7 +62,7 @@ module.exports = {
         const user = await Auth.user(req)
 
         const order = await Order.query().insert({
-            user_id: user_id,
+            user_id: user.id,
             receipt_no: now.getTime()
         })
 
