@@ -15,7 +15,7 @@ module.exports = {
     getProduct: async (req, res) => {
 
         let pageIndex = req.query.page ? req.query.page-1 : 0 // get page index for validation
-        let limit = req.query.limit ? req.query.limit : 12 // set limit data
+        let limit = req.query.limit ? req.query.limit : 8 // set limit data
         let search = req.query.search ? req.query.search : "" // get input search
         let sort = req.query.sort ? req.query.sort : "created_at" // set sort data
         let sortMode = req.query.mode ? req.query.mode : "asc" // set sort mode with default desc
