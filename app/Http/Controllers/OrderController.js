@@ -78,9 +78,9 @@ module.exports = {
         items.forEach( async (val, key) => {
             await OrderItem.query().insert({
                 order_id: order.id,
-                product_id: val.product_id,
+                product_id: val.id,
                 qty: val.qty,
-                total_price: val.total_price
+                total_price: val.price
             })
         })
 
