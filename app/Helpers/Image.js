@@ -19,6 +19,13 @@ module.exports = {
 
         // generate random name for image file
         const imageName = `${uuidv4()}.${imageMime}`
+
+        //check public folder is exist
+        if (await fs.existsSync('public/')) {
+            await fs.mkdirSync('public/')
+            await fs.mkdirSync('public/images')
+        }
+
         // move image file to upload folder
         const moveImage = imageFile.mv(`public/images/${imageName}`)
 
