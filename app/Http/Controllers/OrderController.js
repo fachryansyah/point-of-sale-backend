@@ -75,6 +75,8 @@ module.exports = {
             })
         }
 
+        console.log(items)
+
         items.forEach( async (val, key) => {
             await OrderItem.query().insert({
                 order_id: order.id,
