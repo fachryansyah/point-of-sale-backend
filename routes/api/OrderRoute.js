@@ -7,7 +7,8 @@ const ApiAuth = require("../../app/Http/Middleware/ApiAuth")
 
 Router
     .get("/", ApiAuth, OrderController.getOrder)
-    .get("/:id", ApiAuth, OrderController.showOrder)
+    .get("/d/:id", ApiAuth, OrderController.showOrder)
     .post("/", ApiAuth, OrderController.createOrder)
+    .get('/stats', ApiAuth, OrderController.statisticOrder)
 
 module.exports = Router;

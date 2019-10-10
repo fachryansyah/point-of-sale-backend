@@ -1,3 +1,5 @@
+const { raw } = require('objection')
+const moment = require('moment-timezone');
 const Order = require('../../Models/Order')
 const OrderItem = require('../../Models/OrderItem')
 const Product = require('../../Models/Product')
@@ -23,6 +25,15 @@ module.exports = {
             user_id: user.id,
             id: req.params.id
         })
+
+        if (!order) {
+            return res.json({
+                message: "Order not found",
+                status: 404,
+                data: {},
+                errors: true
+            })
+        }
 
         order = order.toJSON()
 
@@ -114,6 +125,23 @@ module.exports = {
                 total_price_order: totalPrice,
                 order_items: orderItem
             },
+            errors: false
+        })
+    },
+    statisticOrder: async (req, res) => {
+        const order = await Order.query()
+        .select(raw('DATE(created_at) AS label, COUNT(id) AS data'))
+        .groupBy(raw('DATE(created_at)'))
+        // .distinct(raw('DATE(created_at)'))
+
+        order.map(val => {
+            val.label = moment.tz(val.toJSON().label, 'Asia/Jakarta').format('ll')
+        })
+        
+        return res.json({
+            message: "OKE!",
+            status: 200,
+            data: order,
             errors: false
         })
     }
