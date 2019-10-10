@@ -250,11 +250,13 @@ module.exports = {
             })
         }
 
+        const product = await Product.query().findById(req.params.id)
+
         return res.json({
-            message : "OKE",
-            status  : 200,
-            data    : {},
-            errors  : false
+            message: "OKE",
+            status: 200,
+            data: product,
+            errors: false
         })
     },
 
