@@ -67,7 +67,7 @@ const OrderController = {
         })
     },
     createOrder: async (req, res) => {
-        const { items } = req.body
+        const { amount, items } = req.body
 
         const now = new Date()
 
@@ -75,8 +75,11 @@ const OrderController = {
 
         const order = await Order.query().insert({
             user_id: user.id,
-            receipt_no: now.getTime()
+            receipt_no: now.getTime(),
+            amount: amount
         })
+
+        console.log(items)
 
         if (order instanceof Order == false) {
             return res.json({
@@ -112,137 +115,130 @@ const OrderController = {
         .eager("product")
         .where("order_id", order.id)
 
-        let totalPrice = 0
-        orderItem.forEach((val, key) => {
-            totalPrice += val.total_price
-        })
-
         return res.json({
             message: "OKE!",
             status: 200,
             data: {
                 receipt_no: order.receipt_no,
-                total_price_order: totalPrice,
-                order_items: orderItem
+                order_items: orderItem,
+                amount: order.amount,
             },
             errors: false
         })
     },
-    chartOrder: async (req, res) => {
-
-        const mode = req.query.mode ? req.query.mode : 'week'
+    getIncomeOrder: async (req, res) => {
         
-        let currentOrderDate = []
-        let lastOrderDate = []
+        const mode = req.query.mode ? req.query.mode : 'today'
 
-        // check mode
+        let data = {}
+
         switch (mode) {
-            case 'week':
-                currentOrderDate = [
-                    moment().subtract(7, 'days').format('Y-M-D'),
-                    moment().format('Y-M-D')
-                ]
-                lastOrderDate = [
-                    moment().subtract(14, 'days').format('Y-M-D'),
-                    moment().subtract(7, 'days').format('Y-M-D')
-                ]
+            case 'today':
+                data = await OrderController.getIncomeToday()
                 break;
-            case 'month':
-                currentOrderDate = [
-                    moment().subtract(30, 'days').format('Y-M-D'),
-                    moment().format('Y-M-D')
-                ]
-                lastOrderDate = [
-                    moment().subtract(60, 'days').format('Y-M-D'),
-                    moment().subtract(30, 'days').format('Y-M-D')
-                ]
-                break;
-            case 'year':
-                currentOrderDate = [
-                    moment().subtract(365, 'days').format('Y-M-D'),
-                    moment().format('Y-M-D')
-                ]
-                lastOrderDate = [
-                    moment().subtract(730, 'days').format('Y-M-D'),
-                    moment().subtract(365, 'days').format('Y-M-D')
-                ]
-                break;
+            case 'yearly':
+                data = await OrderController.getIncomeYear()
             default:
                 break;
         }
-
-        // ===[get current order]===
-        let currentOrder = await OrderController.getOrderForChart(currentOrderDate, mode)
-
-        // ===[get last order]===
-        let lastOrder = await OrderController.getOrderForChart(lastOrderDate, mode)
-
-
+        
         return res.json({
             message: "OKE!",
             status: 200,
-            data: {
-                current: currentOrder,
-                last: lastOrder
-            },
+            data: data,
             errors: false
         })
     },
-    getOrderForChart: async (date = [], mode = 'week') => {
-        
-        // find data from db by date
-        const order = await Order.query()
-        .select(raw('DATE(created_at) AS label, COUNT(id) AS data, SUM(total_price) as amount'))
-        .distinct(raw('DATE(created_at)'))
-        .eager('order_item')
-        .groupBy(raw('MONTH(created_at)'))
-        .whereBetween(raw('DATE(created_at)'), date)
+    getIncomeToday: async() => {
+        const now = moment().format('Y-M-D')
 
-        console.log(order)
+        const currentIncome = await Order.query()
+        .select(raw('SUM(amount) as income'))
+        .where(raw('DATE(created_at)'), now)
 
-        let orderData = []
+        const lastIncome = await Order.query()
+        .select(raw('SUM(amount) as income'))
+        .where(raw('DATE(created_at)'), moment().subtract(1, 'day').format('Y-M-D'))
 
-        // convert to json
-        order.forEach(val => {
-            orderData.push(val.toJSON())
-        })
+        let substractIncome = currentIncome[0].income - lastIncome[0].income
 
-        orderData.forEach(val => {
-            let totalPrice = 0
-
-            // get total price of order_item
-            val.order_item.forEach(valOrderItem => {
-                totalPrice += valOrderItem.total_price
-            })
-
-            val.total_order_price = totalPrice
-        })
-
-        let data = []
-        let label = []
-        orderData.forEach(val => {
-            data.push(val.total_order_price)
-        })
-        orderData.forEach(val => {
-            switch (mode) {
-                case 'week':
-                    label.push(moment.tz(val.label, 'Asia/Jakarta').format('dddd'))
-                    break;
-                case 'month':
-                    label.push(moment.tz(val.label, 'Asia/Jakarta').format('dddd'))
-                    break;
-                case 'year':
-                    label.push(moment.tz(val.label, 'Asia/Jakarta').format('MMMM'))
-                    break
-                default:
-                    break;
-            }
-        })
+        let calculate = (substractIncome / lastIncome[0].income) * 100
 
         return {
-            data,
-            label
+            income: currentIncome[0].income,
+            precentage: parseFloat(calculate.toFixed(2))
         }
+    },
+    getIncomeYear: async () => {
+
+        const currentDate = [
+            moment().subtract(1, 'year').format('Y-M-D'),
+            moment().format('Y-M-D')
+        ]
+
+        const lastDate = [
+            moment().subtract(2, 'year').format('Y-M-D'),
+            moment().subtract(1, 'year').format('Y-M-D')
+        ]
+
+        const currentIncome = await Order.query()
+        .select(raw('SUM(amount) as income'))
+        .whereBetween(raw('DATE(created_at)'), currentDate)
+
+        const lastIncome = await Order.query()
+        .select(raw('SUM(amount) as income'))
+        .whereBetween(raw('DATE(created_at)'), lastDate)
+
+
+        let subtractIncome = currentIncome[0].income - lastIncome[0].income
+
+        let calculate = (subtractIncome / lastIncome[0].income) * 100
+
+        if (calculate == Number.POSITIVE_INFINITY || calculate == Number.NEGATIVE_INFINITY) {
+            calculate = 0
+        }
+
+        let precentage = parseFloat(calculate.toFixed(2))
+
+        return {
+            income: currentIncome[0].income,
+            precentage: precentage
+        }
+    },
+    getTotalOrder: async (req, res) => {
+
+        const currentDate = [
+            moment().subtract(1, 'week').format('Y-M-D'),
+            moment().format('Y-M-D')
+        ]
+
+        const lastDate = [
+            moment().subtract(2, 'week').format('Y-M-D'),
+            moment().subtract(1, 'week').format('Y-M-D'),
+        ]
+        
+        const currentOrder = await Order.query()
+        .select(raw('COUNT(id) as total'))
+        .whereBetween(raw('DATE(created_at)'), currentDate)
+
+        const lastOrder = await Order.query()
+        .select(raw('COUNT(id) as total'))
+        .whereBetween(raw('DATE(created_at)'), lastDate)
+
+        let subtractOrder = currentOrder[0].total - lastOrder[0].total
+
+        let calculate = (subtractOrder / lastOrder[0].total) * 100
+
+        return res.json({
+            message: 'OKE!',
+            status: 200,
+            data: {
+                total: currentOrder[0].total,
+                precentage: calculate.toFixed(2)
+            },
+            errors: false
+        })
+
     },
     getChartDataWeek: async (req, res) => {
 
@@ -383,26 +379,31 @@ const OrderController = {
 
     },
     recentOrder: async (req, res) => {
-        const mode = req.query.mode ? req.query.mode : 'day'
+        const mode = req.query.mode ? req.query.mode : 'daily'
 
         let date = []
 
         switch (mode) {
-            case 'day':
+            case 'daily':
                 date = [
                     moment().subtract(1, 'day').format('Y-M-D'),
                     moment().format('Y-M-D')
                 ]
                 break;
-            case 'week':
+            case 'weekly':
                 date = [
                     moment().subtract(7, 'day').format('Y-M-D'),
                     moment().format('Y-M-D')
                 ]
                 break;
-            case 'month':
+            case 'monthly':
                 date = [
                     moment().subtract(30, 'day').format('Y-M-D'),
+                    moment().format('Y-M-D')
+                ]
+            case 'yearly' :
+                date = [
+                    moment().subtract(365, 'day').format('Y-M-D'),
                     moment().format('Y-M-D')
                 ]
             default:
@@ -412,6 +413,9 @@ const OrderController = {
         let orders = await Order.query()
         .eager('[order_item.[product], user]')
         .whereBetween(raw('DATE(created_at)'), date)
+        .orderBy("created_at")
+        .limit(25)
+        .offset(0)
 
         let orderData = []
 
@@ -438,7 +442,7 @@ const OrderController = {
             data: orderData,
             errors: false
         })
-    }
+    },
 }
 
 module.exports = OrderController
