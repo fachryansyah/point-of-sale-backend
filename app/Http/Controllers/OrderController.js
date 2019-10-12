@@ -7,9 +7,26 @@ const Auth = require("../../Helpers/Auth")
 
 const OrderController = {
     getOrder: async(req, res) => {
+        const page = req.query.page ? req.query.page-1 : 1
+        const limit = req.query.limit ? req.query.limit : 8
+        const receipt = req.query.receipt ? req.query.receipt : ''
+
         const user = await Auth.user(req)
-        const orders = await Order.query()
-        .where("user_id", user.id)
+        let orders = await Order.query()
+        .where('user_id', user.id)
+        .where('receipt_no', 'LIKE', '%' + receipt + '%')
+        .orderBy('created_at', 'desc')
+        .page(page, limit)
+
+        const totalOrder = await Order.query()
+        .where('user_id', user.id)
+        .resultSize()
+
+        const totalPage = Math.round(totalOrder / limit)
+        const currentPage = req.query.page ? parseInt(req.query.page) : 1
+
+        orders.totalPage = totalPage
+        orders.currentPage = currentPage
 
         return res.json({
             message: "OKE!",
@@ -160,9 +177,15 @@ const OrderController = {
         .select(raw('SUM(amount) as income'))
         .where(raw('DATE(created_at)'), moment().subtract(1, 'day').format('Y-M-D'))
 
+        if (currentIncome[0].income == null) {
+            currentIncome[0].income = 0
+        }
+
         let substractIncome = currentIncome[0].income - lastIncome[0].income
 
         let calculate = (substractIncome / lastIncome[0].income) * 100
+
+        console.log(currentIncome)
 
         return {
             income: currentIncome[0].income,
