@@ -112,7 +112,7 @@ const OrderController = {
 
             await OrderItem.query().insert({
                 order_id: order.id,
-                product_id: val.id,
+                product_id: valRP.id,
                 qty: val.qty,
                 total_price: val.price
             })
@@ -155,6 +155,7 @@ const OrderController = {
                 break;
             case 'yearly':
                 data = await OrderController.getIncomeYear()
+                break;
             default:
                 break;
         }
@@ -358,7 +359,7 @@ const OrderController = {
     getChartDataYear: async (req, res) => {
 
         let currentOrderDate = [
-            moment().subtract(365, 'days').format('Y-M-D'),
+            moment().subtract(1, 'year').format('Y-M-D'),
             moment().format('Y-M-D')
         ]
 
@@ -421,14 +422,16 @@ const OrderController = {
                 break;
             case 'monthly':
                 date = [
-                    moment().subtract(30, 'day').format('Y-M-D'),
+                    moment().subtract(1, 'month').format('Y-M-D'),
                     moment().format('Y-M-D')
                 ]
+                break;
             case 'yearly' :
                 date = [
                     moment().subtract(365, 'day').format('Y-M-D'),
                     moment().format('Y-M-D')
                 ]
+                break;
             default:
                 break;
         }
@@ -436,7 +439,7 @@ const OrderController = {
         let orders = await Order.query()
         .eager('[order_item.[product], user]')
         .whereBetween(raw('DATE(created_at)'), date)
-        .orderBy("created_at")
+        .orderBy("created_at", "desc")
         .limit(25)
         .offset(0)
 
