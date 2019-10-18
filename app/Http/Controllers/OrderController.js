@@ -112,7 +112,7 @@ const OrderController = {
 
             await OrderItem.query().insert({
                 order_id: order.id,
-                product_id: valRP.id,
+                product_id: val.id,
                 qty: val.qty,
                 total_price: val.price
             })
