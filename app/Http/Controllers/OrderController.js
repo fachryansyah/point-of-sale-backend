@@ -7,7 +7,7 @@ const Auth = require("../../Helpers/Auth")
 
 const OrderController = {
     getOrder: async(req, res) => {
-        const page = req.query.page ? req.query.page-1 : 1
+        const page = req.query.page ? req.query.page-1 : 0
         const limit = req.query.limit ? req.query.limit : 8
         const receipt = req.query.receipt ? req.query.receipt : ''
 
