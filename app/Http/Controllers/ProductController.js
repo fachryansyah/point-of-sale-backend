@@ -4,6 +4,7 @@ const fs = require('fs')
 const uuidv4 = require('uuid/v4')
 const Product = require("../../Models/Product")
 const Image = require("../../Helpers/Image")
+const CloudImage = require('../../Helpers/CloudImage')
 
 module.exports = {
     /*
@@ -69,7 +70,7 @@ module.exports = {
         }
 
         //check if has image file
-        if (!req.files) {
+        if (!req.file) {
             return res.json({
                 message: "Validation error",
                 status: 304,
@@ -83,44 +84,13 @@ module.exports = {
                 ]
             })
         }
-
-        if (!req.files.image) {
-            return res.json({
-                message: "Validation error",
-                status: 304,
-                data: {},
-                errors: [
-                    {
-                        location: "body",
-                        msg: "Can't find key image",
-                        param: "image"
-                    }
-                ]
-            })
-        }
-
-        const imageUpload = await Image.upload(req.files.image)
-
-        if (imageUpload.error) {
-            return res.json({
-                message: "Validation error",
-                status: 304,
-                data: {},
-                errors: [
-                    {
-                        location: "body",
-                        msg: imageUpload.message,
-                        param: "image"
-                    }
-                ]
-            })
-        }
+        const imageUpload = await CloudImage.upload(req)
 
         const insertProduct = await Product.query()
         .insert({
             name        : req.body.name,
             description : req.body.description,
-            image       : imageUpload,
+            image       : imageUpload.url,
             category_id : req.body.category_id,
             price       : req.body.price,
             qty         : req.body.qty
@@ -194,41 +164,31 @@ module.exports = {
 
         let updateProduct
 
-        if (req.files) {
-            if (req.files.image) {
+        if (req.file) {
+            const product = await Product.query().findById(req.params.id)
 
-                const product = await Product.query().findById(req.params.id)
-
-                // delete the previous image
-                const deleteImage = await Image.delete(product.image)
-                if (!deleteImage) {
-                    return res.json({message: "cant delet image"})
-                }
-
-                // upload new image to server
-                const imageName = await Image.upload(req.files.image)
-                //check if successfully uploaded
-                if (!imageName) {
-                    return res.json({
-                        message: "Can't upload that image",
-                        status: 500,
-                        data: {},
-                        errors: true
-                    })
-                }
-
-                updateProduct = await Product.query()
-                .findById(req.params.id)
-                .patch({
-                    name        : req.body.name,
-                    description : req.body.description,
-                    image       : imageName,
-                    category_id : req.body.category_id,
-                    price       : req.body.price,
-                    qty         : (req.body.qty < 0 ? 0 : req.body.qty)
+            // upload new image to server
+            const imageName = await CloudImage.upload(req)
+            //check if successfully uploaded
+            if (!imageName) {
+                return res.json({
+                    message: "Can't upload that image",
+                    status: 500,
+                    data: {},
+                    errors: true
                 })
-
             }
+
+            updateProduct = await Product.query()
+            .findById(req.params.id)
+            .patch({
+                name        : req.body.name,
+                description : req.body.description,
+                image       : imageName.url,
+                category_id : req.body.category_id,
+                price       : req.body.price,
+                qty         : (req.body.qty < 0 ? 0 : req.body.qty)
+            })
         }else{
             updateProduct = await Product.query()
             .findById(req.params.id)
@@ -281,9 +241,6 @@ module.exports = {
                 errors: false
             })
         }
-
-        // delete related image
-        Image.delete(productImage.image)
 
         const product = await Product.query()
         .deleteById(req.params.id)
